@@ -1,21 +1,27 @@
 name: Test FastAPI Project
+
 on:
- workflow_dispatch:
- push:
-   branches:
-     - main
+  push:
+    branches: [ main, feature/* ]
+  pull_request:
+
 jobs:
- test:
+  test:
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-   runs-on: ubuntu-latest
-   steps:
-     - name: Checkout repository
-       uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
+      - name: Install dependencies
+        run: |
+          pip install fastapi uvicorn
 
-    - name: Hello CI/CID
-      run: |
-         echo "===== Hello I am testing CI/CD====="
-    - name: Show Docker images
-      run: docker images
+      - name: Test import FastAPI app
+        run: |
+          python -c "from api.main import app; print('App OK')"
